@@ -11,8 +11,10 @@ export default function RegisterScreen({ navigation }) {
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await sendEmailVerification(cred.user);
+
+      await auth.signOut(); 
       Alert.alert('Sukses', 'Cek email Anda untuk verifikasi.');
-      navigation.navigate('Login'); // Arahkan kembali ke halaman Login setelah sukses
+      // navigation.navigate('Login'); 
     } catch (error) {
       Alert.alert('Error', error.message);
     }

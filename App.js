@@ -1,3 +1,5 @@
+import React, { useEffect, useRef } from 'react';
+import { AppState, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
@@ -27,8 +29,37 @@ function AppStack() {
 }
 
 function Root() {
-  const { user, loading } = useAuth();
-  
+  const { user, loading, logout } = useAuth();
+  const waktuMasukBackground = useRef(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      // Pas aplikasi ketutup ke background
+      if (nextAppState === 'background') {
+        waktuMasukBackground.current = Date.now();
+      } 
+      // Pas aplikasi dibuka lagi ke layar
+      else if (nextAppState === 'active') {
+        if (waktuMasukBackground.current) {
+          const selisihDetik = (Date.now() - waktuMasukBackground.current) / 1000;
+          
+          // Kalau lebih dari 10 detik, sikat!
+          if (selisihDetik >= 10) {
+            logout();
+            Alert.alert('Sesi Habis', 'Anda otomatis logout karena aplikasi ditinggalkan lebih dari 10 detik.');
+          }
+          waktuMasukBackground.current = null; // Reset waktunya
+        }
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [user, logout]);
+
   if (loading) return null;
   
   return (

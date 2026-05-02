@@ -95,14 +95,14 @@ export default function LoginScreen({ navigation }) {
       </View>
 
       {/* Tombol Login Google Baru */}
-      <View style={{ marginBottom: 20 }}>
+      {/* <View style={{ marginBottom: 20 }}>
         <Button 
           title="Login dengan Google" 
           onPress={() => promptAsync()} 
           disabled={!request} 
           color="#DB4437" // Warna khas Google
         />
-      </View>
+      </View> */}
 
       <Text 
         style={{ textAlign: 'center', marginTop: 10, color: '#0066cc' }} 
